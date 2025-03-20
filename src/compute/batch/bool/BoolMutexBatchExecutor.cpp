@@ -19,8 +19,8 @@ BoolMutexBatchExecutor::BoolMutexBatchExecutor(std::vector<int64_t> &xs, std::ve
     if (Comm::isClient()) {
         return;
     }
-    for (long long & i : _conds_i) {
-        if (i) {
+    for (int64_t &i: _conds_i) {
+        if (i != 0) {
             // Set to all 1 on each bit
             i = ring(-1ll);
         }
@@ -93,5 +93,8 @@ int BoolMutexBatchExecutor::msgTagCount(int num, int width) {
 }
 
 int BoolMutexBatchExecutor::bmtCount(int num) {
+    if constexpr (Conf::BMT_METHOD == Consts::BMT_FIXED) {
+        return 0;
+    }
     return num * 2;
 }
